@@ -12,12 +12,8 @@ app.get("/", (req, resp) => {
 });
 
 app.get("/:id", (req, resp) => {
-  const painting = provider.getById(req.params.id);
-  if (painting) {
-    resp.json(painting);
-  } else {
-    resp.status(404).json({ error: "Painting not found" });
-  }
+  const results = provider.getById(req.params.id);
+  resp.json(results);
 });
 
 app.get("/gallery/:id", (req, resp) => {

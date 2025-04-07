@@ -8,20 +8,20 @@ module.exports = {
   getAll: () => paintings,
 
   getById: (id) => {
-    return paintings.find(p => p.id.toString() === id.toString());
+    return paintings.find(p => p.paintingID) == id);
   },
 
   getByGalleryId: (galleryId) => {
-    return paintings.filter(p => p.gallery.id.toString() === galleryId.toString());
+    return paintings.filter(p => p.gallery.galleryID == galleryId));
   },
 
   getByArtistId: (artistId) => {
-    return paintings.filter(p => p.artist.id.toString() === artistId.toString());
+    return paintings.filter(p => p.artist.artistID == artistId);
   },
 
   getByYearRange: (min, max) => {
     const minYear = parseInt(min);
     const maxYear = parseInt(max);
-    return paintings.filter(p => typeof p.yearOfWork === 'number' && p.yearOfWork >= minYear && p.yearOfWork <= maxYear);
+    return paintings.filter(p => p.yearOfWork >= minYear && p.yearOfWork <= maxYear);
   }
 };

@@ -8,11 +8,11 @@ module.exports = {
   getAll: () => paintings,
 
   getById: (id) => {
-    return paintings.find(p => p.paintingID) == id);
+    return paintings.find(p => p.paintingID == id);
   },
 
   getByGalleryId: (galleryId) => {
-    return paintings.filter(p => p.gallery.galleryID == galleryId));
+    return paintings.filter(p => p.gallery.galleryID == galleryId);
   },
 
   getByArtistId: (artistId) => {

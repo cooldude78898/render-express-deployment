@@ -4,13 +4,6 @@ const path = require('path');
 const dataPath = path.join(__dirname, 'paintings.json');
 let paintings = [];
 
-try {
-  const rawData = fs.readFileSync(dataPath, 'utf8');
-  paintings = JSON.parse(rawData);
-} catch (err) {
-  console.log("error: file not found");
-}
-
 module.exports = {
   getAll: () => paintings,
 

@@ -1,0 +1,10 @@
+{
+  "name": "project1",
+  "version": "1.0.0",
+  "main": "art.js",
+  "scripts": {
+    "start": "node art.js"
+  },
+  "license": "ISC",
+  "dependencies": {}
+}

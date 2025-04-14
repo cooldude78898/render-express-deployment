@@ -1,58 +1,45 @@
 <?php
 include 'includes/travel-config.inc.php';
 
-// Handle filters
-$continent = $_GET['continent'] ?? '0';
-$country = $_GET['country'] ?? '0';
-$title = $_GET['title'] ?? '';
+try (
+  $continent = $_GET['continent'];
+  $country = $_GET['country'];
+  $imageDetails = $_GET['imagedetails'];
 
-// Build WHERE clause
-$where = [];
-$params = [];
+  $pdo = new PDO($continent, $country, $imageDetails);
+  $pdo = setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-if ($continent !== '0') {
-    $where[] = "ct.ContinentCode = ?";
-    $params[] = $continent;
-}
+    // Fetch images
+  $sql = "
+  SELECT i.ImageID, i.Title, i.Path, i.Exif, i.Colors, c.CountryCodeISO
+  FROM imagedetails i
+  JOIN countries c ON i.CountryCodeISO = c.ISO
+  JOIN continents ct ON c.Continent = ct.ContinentCode
+  ";
 
-if ($country !== '0') {
-    $where[] = "c.ISO = ?";
-    $params[] = $country;
-}
+  $result = $pdo->query($sql);
 
-if (!empty($title)) {
-    $where[] = "i.Title LIKE ?";
-    $params[] = "%$title%";
-}
+  while ($row = $result->fetch()) {
+    echo $row['ImageID']. "-". $row['Title'];
+    echo "<br/>";
+  }
 
-$whereClause = '';
-if (!empty($where)) {
-    $whereClause = 'WHERE ' . implode(' AND ', $where);
-}
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute($params);
+  $images = $stmt->fetchAll();
 
-// Fetch images
-$sql = "
-    SELECT i.ImageID, i.Title, i.Path, i.Exif, i.Colors
-    FROM imagedetails i
-    JOIN countries c ON i.CountryCodeISO = c.ISO
-    JOIN continents ct ON c.Continent = ct.ContinentCode
-    $whereClause
-";
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$images = $stmt->fetchAll();
+  // Fetch continents
+  $continents = $pdo->query("SELECT ContinentCode, ContinentName FROM continents")->fetchAll();
 
-// Fetch continents
-$continents = $pdo->query("SELECT ContinentCode, ContinentName FROM continents")->fetchAll();
+  // Fetch countries that are in imagedetails
+  $countries = $pdo->query("
+  SELECT DISTINCT c.ISO, c.CountryName 
+  FROM countries c
+  JOIN imagedetails i ON c.ISO = i.CountryCodeISO
+  ")->fetchAll();
+  )
 
-// Fetch countries that are in imagedetails
-$countries = $pdo->query("
-    SELECT DISTINCT c.ISO, c.CountryName 
-    FROM countries c
-    JOIN imagedetails i ON c.ISO = i.CountryCodeISO
-")->fetchAll();
-
-?>
+  ?>
 
 <!DOCTYPE html>
 <html lang="en">

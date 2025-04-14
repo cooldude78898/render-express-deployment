@@ -2,6 +2,33 @@
 
 include 'includes/travel-config.inc.php';
 
+$imageId = $_GET['ImageID'] ?? null;
+
+if (!$imageId || !is_numeric($imageId)) {
+    die("Invalid Image ID.");
+}
+
+
+$sql = "
+    SELECT i.ImageID, i.Title, i.Description, i.Path, i.Exif, i.Colors, i.Creator, 
+           c.CountryName, ci.AsciiName AS CityName
+    FROM imagedetails i
+    LEFT JOIN countries c ON i.CountryCodeISO = c.ISO
+    LEFT JOIN cities ci ON i.CityCode = ci.CityCode
+    WHERE i.ImageID = ?
+";
+$stmt = $pdo -> prepare($sql);
+$stmt -> execute([$imageId]);
+$image = $stmt -> fetch();
+
+if (!$image) {
+    die("Image not found.");
+}
+
+
+$exif = json_decode($image['Exif'], true);
+$colors = json_decode($image['Colors'], true);
+
 
 
 ?>
